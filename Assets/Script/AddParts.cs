@@ -7,8 +7,9 @@ public class AddParts : MonoBehaviour
     [SerializeField] GameObject Cube;
 
     public GameObject Model;
+    public GameObject SelectParts;
 
-    GameObject Parts;
+    GameObject ImportParts;
 
     public void Import()
     {
@@ -68,10 +69,10 @@ public class AddParts : MonoBehaviour
         var myLoadedGameObject = assetLoaderContext.RootGameObject;
         myLoadedGameObject.SetActive(true);
 
-        Parts = myLoadedGameObject;
+        ImportParts = myLoadedGameObject;
 
         // アニメーションを持つ場合は無効化
-        var anim = Parts.GetComponent<Animation>();
+        var anim = ImportParts.GetComponent<Animation>();
         if (anim != null)
         {
             anim.enabled = false;
@@ -108,11 +109,12 @@ public class AddParts : MonoBehaviour
 
         // メッシュを操作できるように設定
         var cube = Instantiate(Cube);
+        cube.GetComponent<SelectParts>().AddParts = this;
         cube.transform.localScale = Vector3.one * 0.2f;
 
         var ft = cube.GetComponent<FollowTarget>();
         ft.Size = cube.transform.localScale;
-        ft.Target = Parts.transform;
+        ft.Target = ImportParts.transform;
 
         if (myLoadedGameObject.GetComponentsInChildren<SkinnedMeshRenderer>().Length != 0)
         {
@@ -124,23 +126,29 @@ public class AddParts : MonoBehaviour
             var mesh = myLoadedGameObject.GetComponentInChildren<MeshRenderer>();
             cube.transform.position = mesh.transform.position;
         }
-        ft.Offset = Parts.transform.position - cube.transform.position;
+        ft.Offset = ImportParts.transform.position - cube.transform.position;
+    }
+
+    public void DeleteParts()
+    {
+        Destroy(SelectParts.GetComponent<FollowTarget>().Target.gameObject);
+        Destroy(SelectParts);
     }
 
     public void Head()
     {
         var anim = Model.GetComponent<Animator>();
-        Parts.transform.parent = anim.GetBoneTransform(HumanBodyBones.Head);
+        ImportParts.transform.parent = anim.GetBoneTransform(HumanBodyBones.Head);
     }
 
     public void Arm()
     {
         var anim = Model.GetComponent<Animator>();
-        Parts.transform.parent = anim.GetBoneTransform(HumanBodyBones.RightHand);
+        ImportParts.transform.parent = anim.GetBoneTransform(HumanBodyBones.RightHand);
     }
 
     public void Root()
     {
-        Parts.transform.parent = Model.transform;
+        ImportParts.transform.parent = Model.transform;
     }
 }
