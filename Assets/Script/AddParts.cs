@@ -6,8 +6,8 @@ public class AddParts : MonoBehaviour
 {
     [SerializeField] GameObject Cube;
 
-    public GameObject Model;
-    public GameObject SelectParts;
+    public GameObject Model = null;
+    public GameObject SelectParts = null;
 
     GameObject ImportParts;
 
@@ -137,18 +137,21 @@ public class AddParts : MonoBehaviour
 
     public void Head()
     {
-        var anim = Model.GetComponent<Animator>();
-        ImportParts.transform.parent = anim.GetBoneTransform(HumanBodyBones.Head);
+        SetParent(HumanBodyBones.Head);
     }
 
-    public void Arm()
+    public void Neck()
     {
-        var anim = Model.GetComponent<Animator>();
-        ImportParts.transform.parent = anim.GetBoneTransform(HumanBodyBones.RightHand);
+        SetParent(HumanBodyBones.Neck);
     }
 
-    public void Root()
+    void SetParent(HumanBodyBones bone)
     {
-        ImportParts.transform.parent = Model.transform;
+        if (Model == null || SelectParts == null) return;
+
+        var anim = Model.GetComponent<Animator>();
+        var target = SelectParts.GetComponent<FollowTarget>().Target;
+
+        target.parent = anim.GetBoneTransform(bone);
     }
 }

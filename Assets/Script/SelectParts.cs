@@ -8,4 +8,9 @@ public class SelectParts : MonoBehaviour
     {
         AddParts.SelectParts = gameObject;
     }
+
+    public void Unselected()
+    {
+        AddParts.SelectParts = null;
+    }
 }
