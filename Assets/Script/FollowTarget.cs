@@ -5,16 +5,22 @@ public class FollowTarget : MonoBehaviour
     public Transform Target;
     public Vector3 Offset;
     public Vector3 Size;
-    public Vector3 Ratio;
+
+    Vector3 Scale;
+    Vector3 Position;
 
     void Update()
     {
-        Target.position = transform.position + Offset;
-        Target.rotation = transform.rotation;
+        Scale.x = transform.localScale.x / Size.x;
+        Scale.y = transform.localScale.y / Size.y;
+        Scale.z = transform.localScale.z / Size.z;
+        Target.localScale = Scale;
 
-        Ratio.x = transform.localScale.x / Size.x;
-        Ratio.y = transform.localScale.y / Size.y;
-        Ratio.z = transform.localScale.z / Size.z;
-        Target.localScale = Ratio;
+        Position.x = Offset.x * Scale.x;
+        Position.y = Offset.y * Scale.y;
+        Position.z = Offset.z * Scale.z;
+        Target.position = transform.position + Position;
+
+        Target.rotation = transform.rotation;
     }
 }
