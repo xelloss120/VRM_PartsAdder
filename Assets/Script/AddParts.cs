@@ -70,6 +70,13 @@ public class AddParts : MonoBehaviour
 
         Parts = myLoadedGameObject;
 
+        // アニメーションを持つ場合は無効化
+        var anim = Parts.GetComponent<Animation>();
+        if (anim != null)
+        {
+            anim.enabled = false;
+        }
+
         // メッシュのマテリアルをMToon化
         var mesh1 = (Renderer[])myLoadedGameObject.GetComponentsInChildren<MeshRenderer>();
         var mesh2 = (Renderer[])myLoadedGameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
@@ -99,18 +106,25 @@ public class AddParts : MonoBehaviour
             }
         }
 
-        // メッシュのルートボーンを操作できるように設定
-        foreach (var m in myLoadedGameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
-        {
-            var cube = Instantiate(Cube);
-            cube.transform.localScale = m.bounds.size;
-            cube.transform.position = m.bounds.center;
+        // メッシュを操作できるように設定
+        var cube = Instantiate(Cube);
+        cube.transform.localScale = Vector3.one * 0.2f;
 
-            var ft = cube.GetComponent<FollowTarget>();
-            ft.Target = m.rootBone;
-            ft.Offset = m.rootBone.position - m.bounds.center;
-            ft.Size = m.bounds.size;
+        var ft = cube.GetComponent<FollowTarget>();
+        ft.Size = cube.transform.localScale;
+        ft.Target = Parts.transform;
+
+        if (myLoadedGameObject.GetComponentsInChildren<SkinnedMeshRenderer>().Length != 0)
+        {
+            var mesh = myLoadedGameObject.GetComponentInChildren<SkinnedMeshRenderer>();
+            cube.transform.position = mesh.bounds.center;
         }
+        else
+        {
+            var mesh = myLoadedGameObject.GetComponentInChildren<MeshRenderer>();
+            cube.transform.position = mesh.transform.position;
+        }
+        ft.Offset = Parts.transform.position - cube.transform.position;
     }
 
     public void Head()
