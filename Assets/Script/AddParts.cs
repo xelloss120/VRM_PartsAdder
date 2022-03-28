@@ -1,15 +1,38 @@
 ﻿using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using TriLibCore;
 
 public class AddParts : MonoBehaviour
 {
     [SerializeField] GameObject Cube;
+    [SerializeField] Text Text;
 
     public GameObject Model = null;
+    public GameObject SelectCtrl = null;
     public GameObject SelectParts = null;
+    public string SelectJoin = "";
 
     GameObject ImportParts;
+
+    void Update()
+    {
+        if (SelectParts == null)
+        {
+            Text.text = "選択中のパーツはありません。";
+        }
+        else
+        {
+            if (SelectParts.transform.parent == null)
+            {
+                Text.text = "選択中のパーツは装着されていません。";
+            }
+            else
+            {
+                Text.text = "選択中のパーツは「" + SelectJoin + "」に装着されています。";
+            }
+        }
+    }
 
     public void Import()
     {
@@ -131,27 +154,29 @@ public class AddParts : MonoBehaviour
 
     public void DeleteParts()
     {
-        Destroy(SelectParts.GetComponent<FollowTarget>().Target.gameObject);
         Destroy(SelectParts);
+        Destroy(SelectCtrl);
     }
 
     public void Head()
     {
-        SetParent(HumanBodyBones.Head);
+        SetParent(HumanBodyBones.Head, "頭");
     }
 
     public void Neck()
     {
-        SetParent(HumanBodyBones.Neck);
+        SetParent(HumanBodyBones.Neck, "首");
     }
 
-    void SetParent(HumanBodyBones bone)
+    void SetParent(HumanBodyBones bone, string name)
     {
-        if (Model == null || SelectParts == null) return;
+        if (Model == null || SelectCtrl == null) return;
 
         var anim = Model.GetComponent<Animator>();
-        var target = SelectParts.GetComponent<FollowTarget>().Target;
 
-        target.parent = anim.GetBoneTransform(bone);
+        SelectParts.transform.parent = anim.GetBoneTransform(bone);
+
+        SelectJoin = name;
+        SelectCtrl.GetComponent<SelectParts>().SelectJoin = SelectJoin;
     }
 }
