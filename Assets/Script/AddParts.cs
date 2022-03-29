@@ -173,6 +173,111 @@ public class AddParts : MonoBehaviour
         SetParent(HumanBodyBones.Neck, "首");
     }
 
+    public void Chest()
+    {
+        SetParent(HumanBodyBones.Chest, "胸");
+    }
+
+    public void Spine()
+    {
+        SetParent(HumanBodyBones.Spine, "腰");
+    }
+
+    public void Hips()
+    {
+        SetParent(HumanBodyBones.Hips, "尻");
+    }
+
+    public void LegL()
+    {
+        SetParent(HumanBodyBones.LeftLowerLeg, "左膝");
+    }
+
+    public void LegR()
+    {
+        SetParent(HumanBodyBones.RightLowerLeg, "右膝");
+    }
+
+    public void FootL()
+    {
+        SetParent(HumanBodyBones.LeftFoot, "左足");
+    }
+
+    public void FootR()
+    {
+        SetParent(HumanBodyBones.RightFoot, "右足");
+    }
+
+    public void ArmL()
+    {
+        SetParent(HumanBodyBones.LeftLowerArm, "左腕");
+    }
+
+    public void ArmR()
+    {
+        SetParent(HumanBodyBones.RightLowerArm, "右腕");
+    }
+
+    public void HandL()
+    {
+        SetParent(HumanBodyBones.LeftHand, "左手");
+    }
+
+    public void HandR()
+    {
+        SetParent(HumanBodyBones.RightHand, "右手");
+    }
+
+    public void ThumbL()
+    {
+        SetParent(HumanBodyBones.LeftThumbProximal, "左親指");
+    }
+
+    public void ThumbR()
+    {
+        SetParent(HumanBodyBones.RightThumbProximal, "右親指");
+    }
+
+    public void IndexL()
+    {
+        SetParent(HumanBodyBones.LeftIndexProximal, "左人指");
+    }
+
+    public void IndexR()
+    {
+        SetParent(HumanBodyBones.RightIndexProximal, "右人指");
+    }
+
+    public void MiddleL()
+    {
+        SetParent(HumanBodyBones.LeftMiddleProximal, "左中指");
+    }
+
+    public void MiddleR()
+    {
+        SetParent(HumanBodyBones.RightMiddleProximal, "右中指");
+    }
+
+    public void RingL()
+    {
+        SetParent(HumanBodyBones.LeftRingProximal, "左薬指");
+    }
+
+    public void RingR()
+    {
+        SetParent(HumanBodyBones.RightRingProximal, "右薬指");
+    }
+
+    public void LittleL()
+    {
+        SetParent(HumanBodyBones.LeftLittleProximal, "左小指");
+    }
+
+    public void LittleR()
+    {
+        SetParent(HumanBodyBones.RightLittleProximal, "右小指");
+    }
+
     void SetParent(HumanBodyBones bone, string name)
     {
         if (Model == null || SelectCtrl == null) return;
