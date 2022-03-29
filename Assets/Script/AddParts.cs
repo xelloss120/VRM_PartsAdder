@@ -92,10 +92,8 @@ public class AddParts : MonoBehaviour
         var myLoadedGameObject = assetLoaderContext.RootGameObject;
         myLoadedGameObject.SetActive(true);
 
-        ImportParts = myLoadedGameObject;
-
         // アニメーションを持つ場合は無効化
-        var anim = ImportParts.GetComponent<Animation>();
+        var anim = myLoadedGameObject.GetComponent<Animation>();
         if (anim != null)
         {
             anim.enabled = false;
@@ -137,7 +135,6 @@ public class AddParts : MonoBehaviour
 
         var ft = cube.GetComponent<FollowTarget>();
         ft.Size = cube.transform.localScale;
-        ft.Target = ImportParts.transform;
 
         if (myLoadedGameObject.GetComponentsInChildren<SkinnedMeshRenderer>().Length != 0)
         {
@@ -149,6 +146,14 @@ public class AddParts : MonoBehaviour
             var mesh = myLoadedGameObject.GetComponentInChildren<MeshRenderer>();
             cube.transform.position = mesh.transform.position;
         }
+
+        // 回転操作改善のため操作用cubeとパーツの原点合わせ
+        var go = new GameObject("ImportParts");
+        go.transform.position = cube.transform.position;
+        myLoadedGameObject.transform.parent = go.transform;
+        ImportParts = go;
+
+        ft.Target = ImportParts.transform;
         ft.Offset = ImportParts.transform.position - cube.transform.position;
     }
 
