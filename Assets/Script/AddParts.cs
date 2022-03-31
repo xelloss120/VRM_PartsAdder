@@ -20,16 +20,19 @@ public class AddParts : MonoBehaviour
         if (SelectParts == null)
         {
             Text.text = "選択中のパーツはありません。";
+            Text.color = Color.white;
         }
         else
         {
             if (SelectParts.transform.parent == null)
             {
                 Text.text = "選択中のパーツは装着されていません。";
+                Text.color = Color.red;
             }
             else
             {
                 Text.text = "選択中のパーツは「" + SelectJoin + "」に装着されています。";
+                Text.color = Color.white;
             }
         }
     }
