@@ -14,6 +14,7 @@ public class SelectParts : MonoBehaviour
 
     public void Unselected()
     {
+        AddParts.SelectCtrl = null;
         AddParts.SelectParts = null;
     }
 }
