@@ -7,6 +7,9 @@ public class AddParts : MonoBehaviour
 {
     [SerializeField] GameObject Cube;
     [SerializeField] Text Text;
+    [SerializeField] Toggle Opaque;
+    [SerializeField] Toggle Cutout;
+    [SerializeField] Toggle Transparent;
 
     public GameObject Model = null;
     public GameObject SelectCtrl = null;
@@ -113,21 +116,53 @@ public class AddParts : MonoBehaviour
                 var material = m.sharedMaterials[i];
 
                 material.shader = Shader.Find("VRM/MToon");
-                material.SetColor("_Color", new Color(1, 1, 1));
-                material.SetColor("_ShadeColor", new Color(0.9f, 0.9f, 0.9f));
+                material.SetTexture("_ShadeTexture", material.GetTexture("_MainTex"));
 
-                // 参考
-                // .\VRM_PartsAdderProt\Library\PackageCache\com.vrmc.vrmshaders@ac3083c270\VRM\MToon\MToon\Scripts\UtilsSetter.cs
+                // 参考１
+                // .\VRM\MToon\MToon\Scripts\Enums.cs
+                // .\VRM\MToon\MToon\Scripts\Utils.cs
+                // .\VRM\MToon\MToon\Scripts\UtilsSetter.cs
+                material.SetInt("_CullMode", 0);
+                material.SetInt("_OutlineCullMode", 1);
+
+                //参考２
                 // https://csharp.hotexamples.com/jp/examples/UnityEngine/Material/SetOverrideTag/php-material-setoverridetag-method-examples.html
-                material.SetOverrideTag("RenderType", "Transparent");
-                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                material.SetInt("_ZWrite", 0);
-                material.SetInt("_AlphaToMask", 0);
-                material.DisableKeyword("_ALPHATEST_ON");
-                material.EnableKeyword("_ALPHABLEND_ON");
-                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                material.renderQueue = 3000;
+                if (Opaque.isOn)
+                {
+                    material.SetOverrideTag("RenderType", "Opaque");
+                    material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                    material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                    material.SetInt("_ZWrite", 1);
+                    material.SetInt("_AlphaToMask", 0);
+                    material.DisableKeyword("_ALPHATEST_ON");
+                    material.DisableKeyword("_ALPHABLEND_ON");
+                    material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                    material.renderQueue = 2000;
+                }
+                if (Cutout.isOn)
+                {
+                    material.SetOverrideTag("RenderType", "TransparentCutout");
+                    material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                    material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                    material.SetInt("_ZWrite", 1);
+                    material.SetInt("_AlphaToMask", 1);
+                    material.EnableKeyword("_ALPHATEST_ON");
+                    material.DisableKeyword("_ALPHABLEND_ON");
+                    material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                    material.renderQueue = 2450;
+                }
+                if (Transparent.isOn)
+                {
+                    material.SetOverrideTag("RenderType", "Transparent");
+                    material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                    material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                    material.SetInt("_ZWrite", 0);
+                    material.SetInt("_AlphaToMask", 0);
+                    material.DisableKeyword("_ALPHATEST_ON");
+                    material.EnableKeyword("_ALPHABLEND_ON");
+                    material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                    material.renderQueue = 3000;
+                }
             }
         }
 
