@@ -1,12 +1,18 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TriLibCore;
+using TriLibCore.SFB;
+using UniGLTF;
+using VRM;
 
 public class AddParts : MonoBehaviour
 {
     [SerializeField] GameObject Cube;
     [SerializeField] Text Text;
+    [SerializeField] Toggle UniVRM;
     [SerializeField] Toggle Opaque;
     [SerializeField] Toggle Cutout;
     [SerializeField] Toggle Transparent;
@@ -42,6 +48,69 @@ public class AddParts : MonoBehaviour
 
     public void Import()
     {
+        if (UniVRM.isOn)
+        {
+            var extFilterList = new List<ExtensionFilter>();
+            extFilterList.Add(new ExtensionFilter(null, new[] { "vrm", "glb" }));
+            extFilterList.Add(new ExtensionFilter(null, new[] { "vrm" }));
+            extFilterList.Add(new ExtensionFilter(null, new[] { "glb" }));
+            var sfb = StandaloneFileBrowser.OpenFilePanel("UniVRM", "", extFilterList.ToArray(), false);
+            if (sfb.Count > 0)
+            {
+                // 拡張子判定
+                var path = sfb[0].Name;
+                var ext = Path.GetExtension(path);
+                var glbCheck = ext.Equals(".glb", System.StringComparison.CurrentCultureIgnoreCase);
+                var vrmCheck = ext.Equals(".vrm", System.StringComparison.CurrentCultureIgnoreCase);
+
+                var data = new AutoGltfFileParser(path).Parse();
+
+                GameObject gameObject = null;
+                if (glbCheck)
+                {
+                    // GLB
+                    using (var loader = new ImporterContext(data))
+                    {
+                        var instance = loader.Load();
+                        instance.ShowMeshes();
+                        gameObject = instance.Root;
+                    }
+                }
+                if (vrmCheck)
+                {
+                    // VRM
+                    var vrm = new VRMData(data);
+                    using (var loader = new VRMImporterContext(vrm))
+                    {
+                        var instance = loader.Load();
+                        instance.ShowMeshes();
+                        gameObject = instance.Root;
+                    }
+
+                    // 書き出し時に重力設定で変形する対策
+                    var sb = gameObject.GetComponentsInChildren<VRMSpringBone>();
+                    for (int i = 0; i < sb.Length; i++)
+                    {
+                        sb[i].enabled = false;
+                    }
+
+                    // 名前重複を避けるために末尾に"_"を付ける
+                    var t = gameObject.GetComponentsInChildren<Transform>();
+                    for (int i = 0; i < t.Length; i++)
+                    {
+                        t[i].name += "_";
+                    }
+                }
+                if (gameObject != null)
+                {
+                    SetParts(gameObject);
+                }
+
+                return;
+            }
+            return;
+        }
+
         // Creates an AssetLoaderOptions instance.
         // AssetLoaderOptions is a class used to configure many aspects of the loading process.
         // We won't change the default settings this time, so we can use the instance as it is.
@@ -166,6 +235,11 @@ public class AddParts : MonoBehaviour
             }
         }
 
+        SetParts(myLoadedGameObject);
+    }
+
+    public void SetParts(GameObject gameObject)
+    {
         // メッシュを操作できるように設定
         var cube = Instantiate(Cube);
         cube.GetComponent<SelectParts>().AddParts = this;
@@ -174,21 +248,21 @@ public class AddParts : MonoBehaviour
         var ft = cube.GetComponent<FollowTarget>();
         ft.Size = cube.transform.localScale;
 
-        if (myLoadedGameObject.GetComponentsInChildren<SkinnedMeshRenderer>().Length != 0)
+        if (gameObject.GetComponentsInChildren<SkinnedMeshRenderer>().Length != 0)
         {
-            var mesh = myLoadedGameObject.GetComponentInChildren<SkinnedMeshRenderer>();
+            var mesh = gameObject.GetComponentInChildren<SkinnedMeshRenderer>();
             cube.transform.position = mesh.bounds.center;
         }
         else
         {
-            var mesh = myLoadedGameObject.GetComponentInChildren<MeshRenderer>();
+            var mesh = gameObject.GetComponentInChildren<MeshRenderer>();
             cube.transform.position = mesh.transform.position;
         }
 
         // 回転操作改善のため操作用cubeとパーツの原点合わせ
         var go = new GameObject("ImportParts");
         go.transform.position = cube.transform.position;
-        myLoadedGameObject.transform.parent = go.transform;
+        gameObject.transform.parent = go.transform;
         ImportParts = go;
 
         ft.Target = ImportParts.transform;
