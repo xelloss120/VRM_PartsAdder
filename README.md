@@ -46,7 +46,7 @@ https://120byte.booth.pm/items/3737951
 例
 https://twitter.com/120byte/status/1535635325271277568
 
-■おまけ
+■おまけ１
 
 uniRibbonフォルダにサンプルパーツが同梱されています。
 こちらのサンプルパーツで操作をお試し頂けます。
@@ -54,6 +54,21 @@ uniRibbonフォルダにサンプルパーツが同梱されています。
 サンプルパーツのライセンス
 © Unity Technologies Japan／UCL
 https://unity-chan.com/contents/guideline/
+
+■おまけ２
+
+VRM_PartsSampleフォルダにVRM形式のサンプルパーツが同梱されています。
+00.png : 人型のボーンにパーツが付いてます。（揺れ物、UVスクロール設定あり）
+01.png : UniVRMを有効にして読み込んだ状態です。
+02.png : 装着した状態です。
+03.png : 揺れ物の重力設定が残っている状態を確認しています。
+※00と03は別ツールです。
+
+別ツール：VRMお人形遊びPC版
+https://120byte.booth.pm/items/1654585
+
+サンプルパーツのライセンス
+CC0
 
 ■作った人
 
@@ -77,6 +92,7 @@ https://twitter.com/120byte
 
 20220612
 UniVRM式の読み込み対応
+VRM形式のサンプルパーツを同梱
 
 ■ライセンス
 
