@@ -17,6 +17,10 @@ public class Export : MonoBehaviour
         var path = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", "vrm");
 
         if (path.Name == "") return;
+        if (string.Compare(System.IO.Path.GetExtension(path.Name), ".vrm", true) != 0)
+        {
+            path.Name += ".vrm";
+        }
 
         var normalized = VRMBoneNormalizer.Execute(Model, false);
         var vrm = VRMExporter.Export(new GltfExportSettings(), normalized, new RuntimeTextureSerializer());
